@@ -8,9 +8,12 @@ import {
     signal,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { Store } from "@ngxs/store";
 import { catchError, EMPTY } from "rxjs";
 import type { PollutionDeclaration } from "../../interfaces/pollution-declaration.interface";
 import { PollutionService } from "../../services/pollution.service";
+import { AddFavorite, RemoveFavorite } from "../../state/favorites.actions";
+import { FavoritesState } from "../../state/favorites.state";
 
 @Component({
 	selector: "app-pollution-detail",
@@ -32,6 +35,15 @@ import { PollutionService } from "../../services/pollution.service";
               ← Retour à la liste
             </button>
             <div class="header-actions">
+              @if (isFavorite()) {
+                <button type="button" class="favorite-btn remove" (click)="removeFromFavorites()">
+                  ⭐ Retirer des favoris
+                </button>
+              } @else {
+                <button type="button" class="favorite-btn add" (click)="addToFavorites()">
+                  ☆ Ajouter aux favoris
+                </button>
+              }
               <button type="button" class="edit-btn" (click)="editPollution()">
                 Modifier
               </button>
@@ -190,6 +202,33 @@ import { PollutionService } from "../../services/pollution.service";
       background: #c82333;
     }
 
+    .favorite-btn {
+      font-weight: 600;
+      font-size: 0.9rem;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .favorite-btn.add {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .favorite-btn.add:hover {
+      background: #e0a800;
+    }
+
+    .favorite-btn.remove {
+      background: #ff9800;
+      color: white;
+    }
+
+    .favorite-btn.remove:hover {
+      background: #e68900;
+    }
+
     .detail-content {
       padding: 2rem;
     }
@@ -345,6 +384,7 @@ export class PollutionDetailComponent implements OnInit {
 	private readonly route = inject(ActivatedRoute);
 	private readonly router = inject(Router);
 	private readonly pollutionService = inject(PollutionService);
+	private readonly store = inject(Store);
 
 	protected readonly pollution = signal<PollutionDeclaration | null>(null);
 	protected readonly isLoading = signal(false);
@@ -421,6 +461,25 @@ export class PollutionDetailComponent implements OnInit {
 					// Rediriger vers la liste après suppression
 					this.router.navigate(["/pollutions"]);
 				});
+		}
+	}
+
+	protected isFavorite(): boolean {
+		const id = this.pollutionId();
+		return this.store.selectSnapshot(FavoritesState.isFavorite)(id);
+	}
+
+	protected addToFavorites(): void {
+		const id = this.pollutionId();
+		if (id) {
+			this.store.dispatch(new AddFavorite(id));
+		}
+	}
+
+	protected removeFromFavorites(): void {
+		const id = this.pollutionId();
+		if (id) {
+			this.store.dispatch(new RemoveFavorite(id));
 		}
 	}
 }

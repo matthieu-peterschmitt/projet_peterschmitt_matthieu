@@ -49,6 +49,13 @@ export const routes: Routes = [
 			),
 	},
 	{
+		path: "favorites",
+		loadComponent: () =>
+			import("./components/favorites/favorites.component").then(
+				(m) => m.FavoritesComponent,
+			),
+	},
+	{
 		path: "**",
 		redirectTo: "/pollutions",
 	},

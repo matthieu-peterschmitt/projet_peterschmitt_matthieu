@@ -6,6 +6,11 @@
     <nav class="app-nav">
       <a routerLink="/pollutions" class="nav-link">📋 Liste des Pollutions</a>
       <a routerLink="/pollution/new" class="nav-link">➕ Nouvelle Déclaration</a>
+      <a routerLink="/favorites" class="nav-link favorites-link">
+        ⭐ Mes Favoris @if (favoritesCount() > 0) {
+        <span class="badge">{{ favoritesCount() }}</span>
+        }
+      </a>
       <a routerLink="/users" class="nav-link">👥 Liste des Utilisateurs</a>
       <a routerLink="/user/new" class="nav-link">➕ Nouvel Utilisateur</a>
     </nav>

@@ -9,6 +9,7 @@ import {
 } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Router } from "@angular/router";
+import { Store } from "@ngxs/store";
 import { catchError, EMPTY } from "rxjs";
 import {
     type PollutionDeclaration,
@@ -18,6 +19,8 @@ import {
     type PollutionFilters,
     PollutionService,
 } from "../../services/pollution.service";
+import { AddFavorite, RemoveFavorite } from "../../state/favorites.actions";
+import { FavoritesState } from "../../state/favorites.state";
 
 @Component({
 	selector: "app-pollution-list",
@@ -125,6 +128,21 @@ import {
                   (click)="editPollution(pollution.id!)">
                   Modifier
                 </button>
+                @if (isFavorite(pollution.id!)) {
+                  <button
+                    type="button"
+                    class="favorite-btn remove"
+                    (click)="removeFromFavorites(pollution.id!)">
+                    ⭐ Retirer
+                  </button>
+                } @else {
+                  <button
+                    type="button"
+                    class="favorite-btn add"
+                    (click)="addToFavorites(pollution.id!)">
+                    ☆ Ajouter
+                  </button>
+                }
                 <button
                   type="button"
                   class="delete-btn"
@@ -319,6 +337,28 @@ import {
       background: #c82333;
     }
 
+    .favorite-btn {
+      font-weight: 600;
+    }
+
+    .favorite-btn.add {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .favorite-btn.add:hover {
+      background: #e0a800;
+    }
+
+    .favorite-btn.remove {
+      background: #ff9800;
+      color: white;
+    }
+
+    .favorite-btn.remove:hover {
+      background: #e68900;
+    }
+
     @media (max-width: 768px) {
       .pollution-list-container {
         padding: 1rem;
@@ -347,6 +387,7 @@ import {
 export class PollutionListComponent implements OnInit {
 	private readonly pollutionService = inject(PollutionService);
 	private readonly router = inject(Router);
+	private readonly store = inject(Store);
 
 	protected readonly pollutions = signal<PollutionDeclaration[]>([]);
 	protected readonly filters = signal<PollutionFilters>({});
@@ -477,5 +518,17 @@ export class PollutionListComponent implements OnInit {
 					this.loadPollutions();
 				});
 		}
+	}
+
+	protected isFavorite(pollutionId: number): boolean {
+		return this.store.selectSnapshot(FavoritesState.isFavorite)(pollutionId);
+	}
+
+	protected addToFavorites(pollutionId: number): void {
+		this.store.dispatch(new AddFavorite(pollutionId));
+	}
+
+	protected removeFromFavorites(pollutionId: number): void {
+		this.store.dispatch(new RemoveFavorite(pollutionId));
 	}
 }
