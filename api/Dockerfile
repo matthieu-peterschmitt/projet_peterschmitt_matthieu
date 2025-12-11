@@ -29,7 +29,7 @@ COPY --from=build /usr/src/app/dist dist
 COPY package.json .
 
 # Create a non-root user
-RUN addgroup --system --gid 1001 nodejs && \
+RUN addgroup --system --gid 1001 bunuser && \
   adduser --system --uid 1001 bunuser
 USER bunuser
 
