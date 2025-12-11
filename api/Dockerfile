@@ -29,8 +29,8 @@ COPY --from=build /usr/src/app/dist dist
 COPY package.json .
 
 # Create a non-root user
-RUN addgroup --system --gid 1001 bunuser && \
-  adduser --system --uid 1001 bunuser
+RUN groupadd --system --gid 1001 bunuser && \
+  useradd --system --uid 1001 --gid bunuser --shell /bin/bash bunuser
 USER bunuser
 
 # Expose port 3000
