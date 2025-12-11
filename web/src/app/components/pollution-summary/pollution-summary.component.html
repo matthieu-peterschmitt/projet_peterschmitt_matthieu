@@ -2,117 +2,122 @@
   <h2>Récapitulatif des Déclarations</h2>
 
   @if (declarations.length > 0) {
-  <div class="stats-section">
-    <h3>Statistiques</h3>
-    <div class="stats-grid">
-      <div class="stat-card">
-        <span class="stat-number">{{ totalDeclarations() }}</span>
-        <span class="stat-label">Déclaration(s) totale(s)</span>
-      </div>
-      @for (item of declarationsByType() | keyvalue; track item.key) {
-      <div class="stat-card">
-        <span class="stat-number">{{ item.value }}</span>
-        <span class="stat-label">{{ item.key }}</span>
-      </div>
-      }
-    </div>
-  </div>
-  }
-
-  @if (declarations.length === 0) {
-  <div class="no-declarations">
-    <div class="empty-state">
-      <h3>Aucune déclaration</h3>
-      <p>Les déclarations de pollution apparaîtront ici une fois soumises.</p>
-    </div>
-  </div>
-  }
-
-  @if (declarations.length > 0) {
-  <div class="declarations-list">
-    <h3>Déclarations enregistrées</h3>
-
-    @for (declaration of declarations; track $index; let i = $index) {
-    <div [class]="getCardClass(i)" [id]="getDeclarationId(i)">
-      <div class="card-header">
-        <div class="card-title-section">
-          <h4>{{ declaration.titre }}</h4>
-          @if (isLastDeclaration(i)) {
-          <span class="declaration-number">🆕 Nouvelle déclaration</span>
-          } @else {
-          <span class="declaration-number">Déclaration #{{ i + 1 }}</span>
-          }
+    <div class="stats-section">
+      <h3>Statistiques</h3>
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span class="stat-number">{{ totalDeclarations() }}</span>
+          <span class="stat-label">Déclaration(s) totale(s)</span>
         </div>
-        <div class="card-actions">
-          <span class="pollution-type" [class]="getPollutionTypeClass(declaration.type_pollution)">
-            {{ declaration.type_pollution }}
-          </span>
-          <button class="delete-btn" (click)="deleteDeclaration(i)" title="Supprimer">
-            ❌
-          </button>
-        </div>
-      </div>
-
-      <div class="card-content">
-        <div class="field-group">
-          <label>Description :</label>
-          <p>{{ declaration.description }}</p>
-        </div>
-
-        <div class="info-grid">
-          <div class="field-group">
-            <label>Date d'observation :</label>
-            <span>{{ formatDate(declaration.date_observation) }}</span>
+        @for (item of declarationsByType() | keyvalue; track item.key) {
+          <div class="stat-card">
+            <span class="stat-number">{{ item.value }}</span>
+            <span class="stat-label">{{ item.key }}</span>
           </div>
-
-          @if (isLastDeclaration(i)) {
-          <div class="field-group">
-            <label>Enregistrée le :</label>
-            <span>{{ formatDateTime(currentDate()) }}</span>
-          </div>
-          }
-
-          <div class="field-group">
-            <label>Lieu :</label>
-            <span>{{ declaration.lieu }}</span>
-          </div>
-        </div>
-
-        <div class="coordinates-section">
-          <div class="field-group">
-            <label>Coordonnées :</label>
-            <div class="coordinates-info">
-              <span>{{ formatCoordinates(declaration.latitude, declaration.longitude) }}</span>
-              <a
-                [href]="getGoogleMapsUrl(declaration.latitude, declaration.longitude)"
-                target="_blank"
-                class="maps-link"
-                title="Voir sur Google Maps">
-                🗺️ Voir sur la carte
-              </a>
-            </div>
-          </div>
-        </div>
-
-        @if (declaration.photo_url) {
-        <div class="photo-section">
-          <label>Photo :</label>
-          <div class="photo-container">
-            <img
-              [src]="declaration.photo_url"
-              [alt]="'Photo de ' + declaration.titre"
-              class="pollution-photo"
-              (error)="onImageError($event)"
-              loading="lazy">
-            <a [href]="declaration.photo_url" target="_blank" class="photo-link">
-              Voir l'image complète
-            </a>
-          </div>
-        </div>
         }
       </div>
     </div>
-    }
-  </div>
+  }
+
+  @if (declarations.length === 0) {
+    <div class="no-declarations">
+      <div class="empty-state">
+        <h3>Aucune déclaration</h3>
+        <p>Les déclarations de pollution apparaîtront ici une fois soumises.</p>
+      </div>
+    </div>
+  }
+
+  @if (declarations.length > 0) {
+    <div class="declarations-list">
+      <h3>Déclarations enregistrées</h3>
+
+      @for (declaration of declarations; track $index; let i = $index) {
+        <div [class]="getCardClass(i)" [id]="getDeclarationId(i)">
+          <div class="card-header">
+            <div class="card-title-section">
+              <h4>{{ declaration.titre }}</h4>
+              @if (isLastDeclaration(i)) {
+                <span class="declaration-number">🆕 Nouvelle déclaration</span>
+              } @else {
+                <span class="declaration-number">Déclaration #{{ i + 1 }}</span>
+              }
+            </div>
+            <div class="card-actions">
+              <span
+                class="pollution-type"
+                [class]="getPollutionTypeClass(declaration.type_pollution)"
+              >
+                {{ declaration.type_pollution }}
+              </span>
+              <button class="delete-btn" (click)="deleteDeclaration(i)" title="Supprimer">
+                ❌
+              </button>
+            </div>
+          </div>
+
+          <div class="card-content">
+            <div class="field-group">
+              <label>Description :</label>
+              <p>{{ declaration.description }}</p>
+            </div>
+
+            <div class="info-grid">
+              <div class="field-group">
+                <label>Date d'observation :</label>
+                <span>{{ formatDate(declaration.date_observation) }}</span>
+              </div>
+
+              @if (isLastDeclaration(i)) {
+                <div class="field-group">
+                  <label>Enregistrée le :</label>
+                  <span>{{ formatDateTime(currentDate()) }}</span>
+                </div>
+              }
+
+              <div class="field-group">
+                <label>Lieu :</label>
+                <span>{{ declaration.lieu }}</span>
+              </div>
+            </div>
+
+            <div class="coordinates-section">
+              <div class="field-group">
+                <label>Coordonnées :</label>
+                <div class="coordinates-info">
+                  <span>{{ formatCoordinates(declaration.latitude, declaration.longitude) }}</span>
+                  <a
+                    [href]="getGoogleMapsUrl(declaration.latitude, declaration.longitude)"
+                    target="_blank"
+                    class="maps-link"
+                    title="Voir sur Google Maps"
+                  >
+                    🗺️ Voir sur la carte
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            @if (declaration.photo_url) {
+              <div class="photo-section">
+                <label>Photo :</label>
+                <div class="photo-container">
+                  <img
+                    [src]="declaration.photo_url"
+                    [alt]="'Photo de ' + declaration.titre"
+                    class="pollution-photo"
+                    (error)="onImageError($event)"
+                    loading="lazy"
+                  />
+                  <a [href]="declaration.photo_url" target="_blank" class="photo-link">
+                    Voir l'image complète
+                  </a>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
   }
 </div>

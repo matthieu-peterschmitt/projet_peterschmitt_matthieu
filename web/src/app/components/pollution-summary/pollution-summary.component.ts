@@ -1,5 +1,13 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, EventEmitter, Input, Output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  EventEmitter,
+  Input,
+  Output,
+  signal,
+} from '@angular/core';
 import { PollutionDeclaration } from '../../interfaces/pollution-declaration.interface';
 
 @Component({
@@ -7,7 +15,7 @@ import { PollutionDeclaration } from '../../interfaces/pollution-declaration.int
   imports: [CommonModule],
   templateUrl: './pollution-summary.component.html',
   styleUrls: ['./pollution-summary.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PollutionSummaryComponent {
   @Input() declarations: PollutionDeclaration[] = [];
@@ -21,7 +29,7 @@ export class PollutionSummaryComponent {
   protected readonly totalDeclarations = computed(() => this.declarations.length);
   protected readonly declarationsByType = computed(() => {
     const counts: { [key: string]: number } = {};
-    this.declarations.forEach(declaration => {
+    this.declarations.forEach((declaration) => {
       counts[declaration.type_pollution] = (counts[declaration.type_pollution] || 0) + 1;
     });
     return counts;
@@ -31,7 +39,7 @@ export class PollutionSummaryComponent {
     return new Intl.DateTimeFormat('fr-FR', {
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     }).format(date);
   }
 
@@ -76,7 +84,7 @@ export class PollutionSummaryComponent {
       month: '2-digit',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     }).format(date);
   }
 

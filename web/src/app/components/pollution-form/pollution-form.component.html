@@ -1,186 +1,210 @@
 @if (!isFormSubmitted()) {
-<div class="pollution-form-container">
-  <h2>{{ isEditMode() ? 'Modifier la Pollution' : 'Déclaration de Pollution' }}</h2>
+  <div class="pollution-form-container">
+    <h2>{{ isEditMode() ? 'Modifier la Pollution' : 'Déclaration de Pollution' }}</h2>
 
-  @if (errorMessage()) {
-    <div class="error-alert">
-      {{ errorMessage() }}
-    </div>
-  }
-
-  <form [formGroup]="pollutionForm" (ngSubmit)="onSubmit()" class="pollution-form">
-    <div class="form-group">
-      <label for="titre">Titre de la pollution</label>
-      <input
-        type="text"
-        id="titre"
-        formControlName="titre"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('titre')"
-        placeholder="Ex: Déversement d'huile dans la rivière">
-      @if (isFieldInvalid('titre')) {
-      <div class="error-message">
-        {{ getFieldError('titre') }}
+    @if (errorMessage()) {
+      <div class="error-alert">
+        {{ errorMessage() }}
       </div>
-      }
-    </div>
+    }
 
-    <div class="form-group">
-      <label for="type">Type de pollution</label>
-      <select
-        id="type"
-        formControlName="type"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('type')">
-        <option value="">Sélectionnez un type</option>
-        @for (type of pollutionTypes; track type) {
-        <option [value]="type">
-          {{ type }}
-        </option>
-        }
-      </select>
-      @if (isFieldInvalid('type')) {
-      <div class="error-message">
-        {{ getFieldError('type') }}
-      </div>
-      }
-    </div>
-
-    <div class="form-group">
-      <label for="description">Description</label>
-      <textarea
-        id="description"
-        formControlName="description"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('description')"
-        rows="4"
-        placeholder="Décrivez en détail la pollution observée..."></textarea>
-      @if (isFieldInvalid('description')) {
-      <div class="error-message">
-        {{ getFieldError('description') }}
-      </div>
-      }
-    </div>
-
-    <div class="form-group">
-      <label for="dateObservation">Date de l'observation</label>
-      <input
-        type="date"
-        id="dateObservation"
-        formControlName="dateObservation"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('dateObservation')">
-      @if (isFieldInvalid('dateObservation')) {
-      <div class="error-message">
-        {{ getFieldError('dateObservation') }}
-      </div>
-      }
-    </div>
-
-    <div class="form-group">
-      <label for="lieu">Lieu</label>
-      <input
-        type="text"
-        id="lieu"
-        formControlName="lieu"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('lieu')"
-        placeholder="Ex: Parc de la Villette, Paris">
-      @if (isFieldInvalid('lieu')) {
-      <div class="error-message">
-        {{ getFieldError('lieu') }}
-      </div>
-      }
-    </div>
-
-    <div class="coordinates-group">
+    <form [formGroup]="pollutionForm" (ngSubmit)="onSubmit()" class="pollution-form">
       <div class="form-group">
-        <label for="latitude">Latitude</label>
+        <label for="titre">Titre de la pollution</label>
         <input
-          type="number"
-          id="latitude"
-          formControlName="latitude"
+          type="text"
+          id="titre"
+          formControlName="titre"
           class="form-control"
-          [class.invalid]="isFieldInvalid('latitude')"
-          step="0.000001"
-          placeholder="Ex: 48.8566 (entre -90 et 90)"
-          min="-90"
-          max="90">
-        @if (isFieldInvalid('latitude')) {
-        <div class="error-message">
-          {{ getFieldError('latitude') }}
-        </div>
+          [class.invalid]="isFieldInvalid('titre')"
+          placeholder="Ex: Déversement d'huile dans la rivière"
+        />
+        @if (isFieldInvalid('titre')) {
+          <div class="error-message">
+            {{ getFieldError('titre') }}
+          </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="longitude">Longitude</label>
-        <input
-          type="number"
-          id="longitude"
-          formControlName="longitude"
+        <label for="type">Type de pollution</label>
+        <select
+          id="type"
+          formControlName="type"
           class="form-control"
-          [class.invalid]="isFieldInvalid('longitude')"
-          step="0.000001"
-          placeholder="Ex: 2.3522 (entre -180 et 180)"
-          min="-180"
-          max="180">
-        @if (isFieldInvalid('longitude')) {
-        <div class="error-message">
-          {{ getFieldError('longitude') }}
+          [class.invalid]="isFieldInvalid('type')"
+        >
+          <option value="">Sélectionnez un type</option>
+          @for (type of pollutionTypes; track type) {
+            <option [value]="type">
+              {{ type }}
+            </option>
+          }
+        </select>
+        @if (isFieldInvalid('type')) {
+          <div class="error-message">
+            {{ getFieldError('type') }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-control"
+          [class.invalid]="isFieldInvalid('description')"
+          rows="4"
+          placeholder="Décrivez en détail la pollution observée..."
+        ></textarea>
+        @if (isFieldInvalid('description')) {
+          <div class="error-message">
+            {{ getFieldError('description') }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="dateObservation">Date de l'observation</label>
+        <input
+          type="date"
+          id="dateObservation"
+          formControlName="dateObservation"
+          class="form-control"
+          [class.invalid]="isFieldInvalid('dateObservation')"
+        />
+        @if (isFieldInvalid('dateObservation')) {
+          <div class="error-message">
+            {{ getFieldError('dateObservation') }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="lieu">Lieu</label>
+        <input
+          type="text"
+          id="lieu"
+          formControlName="lieu"
+          class="form-control"
+          [class.invalid]="isFieldInvalid('lieu')"
+          placeholder="Ex: Parc de la Villette, Paris"
+        />
+        @if (isFieldInvalid('lieu')) {
+          <div class="error-message">
+            {{ getFieldError('lieu') }}
+          </div>
+        }
+      </div>
+
+      <div class="coordinates-group">
+        <div class="form-group">
+          <label for="latitude">Latitude</label>
+          <input
+            type="number"
+            id="latitude"
+            formControlName="latitude"
+            class="form-control"
+            [class.invalid]="isFieldInvalid('latitude')"
+            step="0.000001"
+            placeholder="Ex: 48.8566 (entre -90 et 90)"
+            min="-90"
+            max="90"
+          />
+          @if (isFieldInvalid('latitude')) {
+            <div class="error-message">
+              {{ getFieldError('latitude') }}
+            </div>
+          }
         </div>
-        }
+
+        <div class="form-group">
+          <label for="longitude">Longitude</label>
+          <input
+            type="number"
+            id="longitude"
+            formControlName="longitude"
+            class="form-control"
+            [class.invalid]="isFieldInvalid('longitude')"
+            step="0.000001"
+            placeholder="Ex: 2.3522 (entre -180 et 180)"
+            min="-180"
+            max="180"
+          />
+          @if (isFieldInvalid('longitude')) {
+            <div class="error-message">
+              {{ getFieldError('longitude') }}
+            </div>
+          }
+        </div>
       </div>
-    </div>
 
-    <div class="form-group">
-      <label for="photoUrl">Photo (URL)</label>
-      <input
-        type="text"
-        id="photoUrl"
-        formControlName="photoUrl"
-        class="form-control"
-        [class.invalid]="isFieldInvalid('photoUrl')"
-        placeholder="https://exemple.com/photo.jpg (optionnel)">
-      @if (isFieldInvalid('photoUrl')) {
-      <div class="error-message">
-        {{ getFieldError('photoUrl') }}
-      </div>
-      }
-      <small class="form-text">Optionnel - URL d'une photo de la pollution (formats supportés: jpg, png, gif, webp, bmp, svg)</small>
-    </div>
-
-    <div class="form-actions">
-      <button
-        type="submit"
-        class="btn btn-primary"
-        [disabled]="pollutionForm.invalid || isLoading()">
-        @if (isLoading()) {
-          Traitement...
-        } @else {
-          {{ isEditMode() ? 'Mettre à jour' : 'Déclarer' }}
+      <div class="form-group">
+        <label for="photoUrl">Photo (URL)</label>
+        <input
+          type="text"
+          id="photoUrl"
+          formControlName="photoUrl"
+          class="form-control"
+          [class.invalid]="isFieldInvalid('photoUrl')"
+          placeholder="https://exemple.com/photo.jpg (optionnel)"
+        />
+        @if (isFieldInvalid('photoUrl')) {
+          <div class="error-message">
+            {{ getFieldError('photoUrl') }}
+          </div>
         }
-      </button>
-      <button
-        type="button"
-        class="btn btn-secondary"
-        (click)="pollutionForm.reset()"
-        [disabled]="isLoading()">
-        Réinitialiser
-      </button>
-    </div>
+        <small class="form-text"
+          >Optionnel - URL d'une photo de la pollution (formats supportés: jpg, png, gif, webp, bmp,
+          svg)</small
+        >
+      </div>
 
-  </form>
-</div>
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="pollutionForm.invalid || isLoading()"
+        >
+          @if (isLoading()) {
+            Traitement...
+          } @else {
+            {{ isEditMode() ? 'Mettre à jour' : 'Déclarer' }}
+          }
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="pollutionForm.reset()"
+          [disabled]="isLoading()"
+        >
+          Réinitialiser
+        </button>
+      </div>
+    </form>
+  </div>
 }
 
 @if (isFormSubmitted()) {
-<div class="success-message">
-  <div class="success-content">
-    <div class="success-icon">✅</div>
-    <h2>{{ isEditMode() ? 'Pollution mise à jour avec succès!' : 'Déclaration enregistrée avec succès!' }}</h2>
-    <p>{{ isEditMode() ? 'Les modifications ont été sauvegardées.' : 'Votre déclaration de pollution a été enregistrée.' }}</p>
-    <p class="redirect-info">Redirection en cours...</p>
+  <div class="success-message">
+    <div class="success-content">
+      <div class="success-icon">✅</div>
+      <h2>
+        {{
+          isEditMode()
+            ? 'Pollution mise à jour avec succès!'
+            : 'Déclaration enregistrée avec succès!'
+        }}
+      </h2>
+      <p>
+        {{
+          isEditMode()
+            ? 'Les modifications ont été sauvegardées.'
+            : 'Votre déclaration de pollution a été enregistrée.'
+        }}
+      </p>
+      <p class="redirect-info">Redirection en cours...</p>
+    </div>
   </div>
-</div>
 }

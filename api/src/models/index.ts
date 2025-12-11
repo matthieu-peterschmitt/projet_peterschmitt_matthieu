@@ -1,17 +1,15 @@
 import { Sequelize } from "sequelize";
 import { config } from "../config.js";
 import { pollutionModelFactory } from "./pollution.model";
-import { utilisateursModelFactory } from "./utilisateurs.model";
+import { Utilisateurs, utilisateursModelFactory } from "./utilisateurs.model";
 
 const { BDD } = config;
-
 const sequelize = new Sequelize(
-  `postgres://${BDD.user}:${BDD.password}@${BDD.host}/${BDD.bdname}`,
+  `postgres://${BDD.user}:${BDD.password}@${BDD.host}:${BDD.port}/${BDD.bdname}`,
   {
     dialect: "postgres",
     protocol: "postgres",
     dialectOptions: {
-      ssl: true,
       native: true,
     },
     define: {
@@ -29,12 +27,13 @@ sequelize
     console.log("Failed to sync db: " + err.message);
   });
 
-const Utilisateurs = utilisateursModelFactory(sequelize);
+const UtilisateursModel = utilisateursModelFactory(sequelize);
 
 const db = {
   sequelize: sequelize,
-  utilisateurs: Utilisateurs,
+  utilisateurs: UtilisateursModel,
   pollutions: pollutionModelFactory(sequelize),
 };
 
 export default db;
+export type { Utilisateurs };

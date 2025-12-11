@@ -13,6 +13,20 @@
       </a>
       <a routerLink="/users" class="nav-link">👥 Liste des Utilisateurs</a>
       <a routerLink="/user/new" class="nav-link">➕ Nouvel Utilisateur</a>
+
+      <div class="nav-user">
+        @if (isAuthenticated()) {
+        <span class="user-info">
+          👤 {{ currentUser()?.prenom }} {{ currentUser()?.nom }} @if (currentUser()?.role) {
+          <span class="user-role">({{ currentUser()?.role }})</span>
+          }
+        </span>
+        <button (click)="logout()" class="btn-logout">🚪 Déconnexion</button>
+        } @else {
+        <a routerLink="/login" class="nav-link">🔐 Connexion</a>
+        <a routerLink="/register" class="nav-link">📝 Inscription</a>
+        }
+      </div>
     </nav>
   </header>
 

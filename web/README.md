@@ -143,6 +143,7 @@ The application will be available at `http://localhost:80`.
 - **Size:** Optimized for production with multi-stage build
 
 The Dockerfile uses a multi-stage build:
+
 1. **Install stage:** Installs dependencies
 2. **Build stage:** Builds the Angular application
 3. **Release stage:** Serves static files with Nginx

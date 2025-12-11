@@ -32,8 +32,10 @@
 .app-nav {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 2rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 .nav-link {
@@ -46,6 +48,8 @@
   font-size: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+  border: none;
+  cursor: pointer;
 }
 
 .nav-link:hover {
@@ -92,6 +96,63 @@
   }
 }
 
+.nav-user {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-left: auto;
+  padding-left: 2rem;
+  border-left: 2px solid rgba(52, 152, 219, 0.2);
+}
+
+.user-info {
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-role {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.btn-logout {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-logout:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+}
+
+.nav-link[routerLink='/register'] {
+  background: #27ae60;
+  box-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+}
+
+.nav-link[routerLink='/register']:hover {
+  background: #229954;
+  box-shadow: 0 4px 12px rgba(39, 174, 96, 0.4);
+}
+
 .app-main {
   flex: 1;
   padding: 0 2rem;
@@ -127,6 +188,15 @@
   .nav-link {
     width: 200px;
     text-align: center;
+  }
+
+  .nav-user {
+    margin-left: 0;
+    padding-left: 0;
+    border-left: none;
+    border-top: 2px solid rgba(52, 152, 219, 0.2);
+    padding-top: 1rem;
+    flex-direction: column;
   }
 }
 

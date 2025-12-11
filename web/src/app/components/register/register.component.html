@@ -1,0 +1,93 @@
+<div class="register-container">
+  <div class="register-card">
+    <h1>Inscription</h1>
+
+    @if (error()) {
+      <div class="alert alert-error">
+        {{ error() }}
+      </div>
+    }
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nom">Nom *</label>
+          <input
+            type="text"
+            id="nom"
+            formControlName="nom"
+            placeholder="Entrez votre nom"
+            [class.error]="nomControl.invalid && nomControl.touched"
+          />
+          @if (nomControl.invalid && nomControl.touched) {
+            <span class="error-message">Le nom est requis</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="prenom">Prénom *</label>
+          <input
+            type="text"
+            id="prenom"
+            formControlName="prenom"
+            placeholder="Entrez votre prénom"
+            [class.error]="prenomControl.invalid && prenomControl.touched"
+          />
+          @if (prenomControl.invalid && prenomControl.touched) {
+            <span class="error-message">Le prénom est requis</span>
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="login">Identifiant *</label>
+        <input
+          type="text"
+          id="login"
+          formControlName="login"
+          placeholder="Choisissez un identifiant"
+          [class.error]="loginControl.invalid && loginControl.touched"
+        />
+        @if (loginControl.invalid && loginControl.touched) {
+          @if (loginControl.errors?.['required']) {
+            <span class="error-message">L'identifiant est requis</span>
+          }
+          @if (loginControl.errors?.['minlength']) {
+            <span class="error-message">L'identifiant doit contenir au moins 3 caractères</span>
+          }
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Mot de passe *</label>
+        <input
+          type="password"
+          id="password"
+          formControlName="password"
+          placeholder="Choisissez un mot de passe"
+          [class.error]="passwordControl.invalid && passwordControl.touched"
+        />
+        @if (passwordControl.invalid && passwordControl.touched) {
+          @if (passwordControl.errors?.['required']) {
+            <span class="error-message">Le mot de passe est requis</span>
+          }
+          @if (passwordControl.errors?.['minlength']) {
+            <span class="error-message">Le mot de passe doit contenir au moins 6 caractères</span>
+          }
+        }
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || loading()">
+        @if (loading()) {
+          <span>Inscription en cours...</span>
+        } @else {
+          <span>S'inscrire</span>
+        }
+      </button>
+    </form>
+
+    <div class="login-link">
+      <p>Vous avez déjà un compte ? <a routerLink="/login">Se connecter</a></p>
+    </div>
+  </div>
+</div>
