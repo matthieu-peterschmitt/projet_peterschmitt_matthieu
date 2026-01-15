@@ -1,20 +1,21 @@
 import { CommonModule } from '@angular/common';
 import {
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  inject,
-  input,
-  type OnInit,
-  Output,
-  signal,
+    ChangeDetectionStrategy,
+    Component,
+    computed,
+    EventEmitter,
+    inject,
+    input,
+    type OnInit,
+    Output,
+    signal,
 } from '@angular/core';
 import { FormBuilder, type FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { catchError, EMPTY } from 'rxjs';
 import {
-  type PollutionDeclaration,
-  PollutionType,
+    type PollutionDeclaration,
+    PollutionType,
 } from '../../interfaces/pollution-declaration.interface';
 import { PollutionService } from '../../services/pollution.service';
 
@@ -41,6 +42,12 @@ export class PollutionFormComponent implements OnInit {
   protected readonly isLoading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly isEditMode = signal(false);
+  protected readonly selectedFile = signal<File | null>(null);
+  protected readonly photoPreview = signal<string | null>(null);
+  protected readonly selectedFileName = computed(() => {
+    const file = this.selectedFile();
+    return file ? file.name : null;
+  });
 
   constructor() {
     this.pollutionForm = this.formBuilder.group({
@@ -51,7 +58,6 @@ export class PollutionFormComponent implements OnInit {
       lieu: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       latitude: ['', [Validators.required, this.coordinateValidator('latitude')]],
       longitude: ['', [Validators.required, this.coordinateValidator('longitude')]],
-      photoUrl: ['', [this.urlValidator]],
     });
   }
 
@@ -96,8 +102,57 @@ export class PollutionFormComponent implements OnInit {
       lieu: pollution.lieu,
       latitude: pollution.latitude,
       longitude: pollution.longitude,
-      photoUrl: pollution.photo_url || '',
     });
+
+    // Si une photo existe, l'afficher
+    if (pollution.photo_url) {
+      this.photoPreview.set(pollution.photo_url);
+    }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+
+      // Vérifier la taille (max 5MB)
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        this.errorMessage.set('Le fichier est trop volumineux. Taille maximale : 5 MB');
+        input.value = '';
+        return;
+      }
+
+      // Vérifier le type
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/bmp'];
+      if (!allowedTypes.includes(file.type)) {
+        this.errorMessage.set('Format de fichier non supporté. Utilisez JPEG, PNG, GIF, WEBP ou BMP');
+        input.value = '';
+        return;
+      }
+
+      this.selectedFile.set(file);
+      this.errorMessage.set(null);
+
+      // Créer un aperçu
+      const reader = new FileReader();
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          this.photoPreview.set(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+
+  removePhoto(): void {
+    this.selectedFile.set(null);
+    this.photoPreview.set(null);
+    // Réinitialiser l'input file
+    const fileInput = document.getElementById('photo') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   onSubmit(): void {
@@ -111,7 +166,7 @@ export class PollutionFormComponent implements OnInit {
         lieu: formValue.lieu.trim(),
         latitude: parseFloat(formValue.latitude),
         longitude: parseFloat(formValue.longitude),
-        photo_url: formValue.photoUrl ? formValue.photoUrl.trim() : undefined,
+        // Ne pas inclure photo_url - géré par le fichier
       };
 
       if (this.isEditMode()) {
@@ -128,8 +183,11 @@ export class PollutionFormComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
+    // Passer le fichier au service au lieu de photo_url
+    const file = this.selectedFile();
+
     this.pollutionService
-      .createPollution(declaration)
+      .createPollution(declaration, file || undefined)
       .pipe(
         catchError((error) => {
           this.errorMessage.set('Erreur lors de la création: ' + error.message);
@@ -156,8 +214,11 @@ export class PollutionFormComponent implements OnInit {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
+    // Passer le fichier au service au lieu de photo_url
+    const file = this.selectedFile();
+
     this.pollutionService
-      .updatePollution(pollutionToUpdate.id, declaration)
+      .updatePollution(pollutionToUpdate.id, declaration, file || undefined)
       .pipe(
         catchError((error) => {
           this.errorMessage.set('Erreur lors de la mise à jour: ' + error.message);
@@ -165,14 +226,13 @@ export class PollutionFormComponent implements OnInit {
           return EMPTY;
         }),
       )
-      .subscribe((updatedPollution) => {
-        this.declarationSubmitted.emit(updatedPollution);
+      .subscribe(() => {
         this.isFormSubmitted.set(true);
         this.isLoading.set(false);
 
         // Rediriger vers les détails
         setTimeout(() => {
-          this.router.navigate(['/pollution', updatedPollution.id]);
+          this.router.navigate(['/pollution', pollutionToUpdate.id]);
         }, 2000);
       });
   }
@@ -234,18 +294,6 @@ export class PollutionFormComponent implements OnInit {
     };
   }
 
-  urlValidator(control: { value: any }) {
-    if (!control.value || control.value.trim() === '') return null;
-
-    const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?.*)?$/i;
-
-    if (!urlPattern.test(control.value.trim())) {
-      return { invalidImageUrl: true };
-    }
-
-    return null;
-  }
-
   getFieldError(fieldName: string): string {
     const field = this.pollutionForm.get(fieldName);
 
@@ -281,10 +329,6 @@ export class PollutionFormComponent implements OnInit {
       if (field.errors['tooOldDate']) {
         return 'La date ne peut pas être antérieure à 1900.';
       }
-
-      if (field.errors['invalidImageUrl']) {
-        return "L'URL doit pointer vers une image valide (jpg, png, gif, etc.).";
-      }
     }
 
     return '';
@@ -312,7 +356,6 @@ export class PollutionFormComponent implements OnInit {
       lieu: 'Le lieu',
       latitude: 'La latitude',
       longitude: 'La longitude',
-      photoUrl: "L'URL de la photo",
     };
     return names[fieldName] || fieldName;
   }

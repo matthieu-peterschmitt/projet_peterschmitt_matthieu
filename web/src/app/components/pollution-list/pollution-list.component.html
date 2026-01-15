@@ -1,0 +1,171 @@
+<div class="pollution-list-container">
+  <div class="header">
+    <h2>Liste des Pollutions</h2>
+    <div class="stats">
+      <span class="stat-badge">{{ totalPollutions() }} pollutions</span>
+      @if (hasActiveSearch()) {
+        <span class="active-search-badge">🔍 Recherche active</span>
+      }
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-section">
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input
+        type="text"
+        [value]="searchQuery()"
+        (input)="onSearchChange($any($event.target).value)"
+        class="search-input"
+        placeholder="Rechercher une pollution par titre..."
+      />
+      @if (searchQuery()) {
+        <button type="button" class="clear-btn" (click)="clearSearch()" title="Effacer la recherche">
+          ✕
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- État de chargement -->
+  @if (isLoading()) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Chargement des pollutions...</p>
+    </div>
+  }
+
+  <!-- Message d'erreur -->
+  @if (errorMessage()) {
+    <div class="error-message">
+      <span class="error-icon">⚠️</span>
+      {{ errorMessage() }}
+    </div>
+  }
+
+  <!-- Résultats -->
+  @if (!isLoading()) {
+    @if (pollutions().length === 0) {
+      <div class="no-pollutions">
+        @if (hasActiveSearch()) {
+          <div class="no-results-icon">🔍</div>
+          <h3>Aucune pollution trouvée</h3>
+          <p>Aucun résultat pour "{{ searchQuery() }}"</p>
+          <button type="button" class="clear-btn-large" (click)="clearSearch()">
+            Effacer la recherche
+          </button>
+        } @else {
+          <div class="no-results-icon">📋</div>
+          <h3>Aucune pollution recensée</h3>
+          <p>Soyez le premier à déclarer une pollution</p>
+        }
+      </div>
+    } @else {
+      <!-- Grille des pollutions -->
+      <div class="pollutions-grid">
+        @for (pollution of pollutions(); track pollution.id) {
+          <div class="pollution-card">
+            <!-- En-tête de la carte -->
+            <div class="pollution-header">
+              <h4 class="pollution-title">{{ pollution.titre }}</h4>
+              <span class="pollution-type-badge" [attr.data-type]="pollution.type_pollution">
+                {{ pollution.type_pollution }}
+              </span>
+            </div>
+
+            <!-- Photo (si disponible) -->
+            @if (pollution.photo_url) {
+              <div class="pollution-image-container">
+                <img
+                  [src]="pollution.photo_url"
+                  [alt]="'Photo de ' + pollution.titre"
+                  class="pollution-image"
+                />
+              </div>
+            }
+
+            <!-- Contenu -->
+            <div class="pollution-content">
+              <p class="pollution-description">{{ pollution.description }}</p>
+
+              <div class="pollution-meta">
+                <div class="meta-item">
+                  <span class="meta-icon">📍</span>
+                  <span class="meta-text">{{ pollution.lieu }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">📅</span>
+                  <span class="meta-text">{{ pollution.date_observation | date: 'dd/MM/yyyy' }}</span>
+                </div>
+                @if (pollution.decouvreur_nom) {
+                  <div class="meta-item">
+                    <span class="meta-icon">👤</span>
+                    <span class="meta-text">
+                      {{ pollution.decouvreur_prenom }} {{ pollution.decouvreur_nom }}
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="pollution-actions">
+              <button
+                type="button"
+                class="action-btn detail-btn"
+                (click)="viewDetail(pollution.id!)"
+                title="Voir les détails"
+              >
+                <span class="btn-icon">👁️</span>
+                Détails
+              </button>
+
+              <button
+                type="button"
+                class="action-btn edit-btn"
+                (click)="editPollution(pollution.id!)"
+                title="Modifier"
+              >
+                <span class="btn-icon">✏️</span>
+                Modifier
+              </button>
+
+              @if (isFavorite(pollution.id!)) {
+                <button
+                  type="button"
+                  class="action-btn favorite-btn active"
+                  (click)="removeFromFavorites(pollution.id!)"
+                  title="Retirer des favoris"
+                >
+                  <span class="btn-icon">⭐</span>
+                  Favoris
+                </button>
+              } @else {
+                <button
+                  type="button"
+                  class="action-btn favorite-btn"
+                  (click)="addToFavorites(pollution.id!)"
+                  title="Ajouter aux favoris"
+                >
+                  <span class="btn-icon">☆</span>
+                  Favoris
+                </button>
+              }
+
+              <button
+                type="button"
+                class="action-btn delete-btn"
+                (click)="deletePollution(pollution.id!)"
+                title="Supprimer"
+              >
+                <span class="btn-icon">🗑️</span>
+                Supprimer
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>

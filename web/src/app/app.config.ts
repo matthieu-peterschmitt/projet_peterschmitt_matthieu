@@ -1,11 +1,10 @@
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import {
-  type ApplicationConfig,
-  provideBrowserGlobalErrorListeners,
-  provideZonelessChangeDetection,
+    type ApplicationConfig,
+    provideBrowserGlobalErrorListeners,
+    provideZonelessChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { withNgxsStoragePlugin } from '@ngxs/storage-plugin';
 import { provideStore } from '@ngxs/store';
 
 import { routes } from './app.routes';
@@ -19,11 +18,6 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    provideStore(
-      [AuthState, FavoritesState],
-      withNgxsStoragePlugin({
-        keys: ['auth', 'favorites'],
-      }),
-    ),
+    provideStore([AuthState, FavoritesState]),
   ],
 };

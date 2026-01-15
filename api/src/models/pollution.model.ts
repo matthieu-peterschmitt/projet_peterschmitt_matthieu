@@ -32,7 +32,23 @@ export const pollutionModelFactory = (sequelize: Sequelize) => {
       type: DataTypes.DECIMAL(9, 6),
     },
     photo_url: {
+      type: DataTypes.TEXT, // Changé de STRING à TEXT pour stocker base64
+    },
+    utilisateur_id: {
       type: DataTypes.STRING,
+      allowNull: true,
+      references: {
+        model: "utilisateurs",
+        key: "id",
+      },
+    },
+    decouvreur_nom: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    decouvreur_prenom: {
+      type: DataTypes.STRING,
+      allowNull: true,
     },
   });
 };

@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { Store } from '@ngxs/store';
 import { Logout } from './state/auth.actions';
@@ -18,13 +19,18 @@ export class App {
   private readonly router = inject(Router);
 
   protected readonly title = 'TP4 - Gestion des Pollutions';
-  protected readonly favoritesCount = computed(() =>
-    this.store.selectSnapshot(FavoritesState.getFavoritesCount),
+  protected readonly favoritesCount = toSignal(
+    this.store.select(FavoritesState.getFavoritesCount),
+    { initialValue: 0 }
   );
-  protected readonly isAuthenticated = computed(() =>
-    this.store.selectSnapshot(AuthState.isAuthenticated),
+  protected readonly isAuthenticated = toSignal(
+    this.store.select(AuthState.isAuthenticated),
+    { initialValue: false }
   );
-  protected readonly currentUser = computed(() => this.store.selectSnapshot(AuthState.user));
+  protected readonly currentUser = toSignal(
+    this.store.select(AuthState.user),
+    { initialValue: null }
+  );
 
   logout(): void {
     this.store.dispatch(new Logout()).subscribe(() => {

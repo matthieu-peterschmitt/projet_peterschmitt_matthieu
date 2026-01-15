@@ -141,23 +141,29 @@
       </div>
 
       <div class="form-group">
-        <label for="photoUrl">Photo (URL)</label>
+        <label for="photo">Photo de la pollution</label>
         <input
-          type="text"
-          id="photoUrl"
-          formControlName="photoUrl"
+          type="file"
+          id="photo"
+          (change)="onFileSelected($event)"
           class="form-control"
-          [class.invalid]="isFieldInvalid('photoUrl')"
-          placeholder="https://exemple.com/photo.jpg (optionnel)"
+          accept="image/jpeg,image/jpg,image/png,image/gif,image/webp,image/bmp"
         />
-        @if (isFieldInvalid('photoUrl')) {
-          <div class="error-message">
-            {{ getFieldError('photoUrl') }}
+        @if (selectedFileName()) {
+          <div class="file-info">
+            📎 Fichier sélectionné : {{ selectedFileName() }}
+          </div>
+        }
+        @if (photoPreview()) {
+          <div class="photo-preview">
+            <img [src]="photoPreview()" alt="Aperçu de la photo" />
+            <button type="button" class="remove-photo-btn" (click)="removePhoto()">
+              ✕ Supprimer la photo
+            </button>
           </div>
         }
         <small class="form-text"
-          >Optionnel - URL d'une photo de la pollution (formats supportés: jpg, png, gif, webp, bmp,
-          svg)</small
+          >Optionnel - Formats supportés : JPEG, PNG, GIF, WEBP, BMP (Max 5 MB)</small
         >
       </div>
 
